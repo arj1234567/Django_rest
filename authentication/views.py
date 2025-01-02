@@ -90,6 +90,7 @@ class LogoutApiView(generics.GenericAPIView):
                 self.response_format['message'] = "Succesfully logged out"
                 return Response(self.response_format,status=status.HTTP_200_OK)
                         
+                        
         except Exception as es:
             # Handle any server-side errors
             self.response_format['status_code'] = status.HTTP_500_INTERNAL_SERVER_ERROR
