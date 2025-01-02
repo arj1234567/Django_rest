@@ -1,0 +1,15 @@
+# Ignore all `.log` files
+*.log
+
+# Ignore the `node_modules` directory
+node_modules/
+
+# Ignore compiled Python files
+*.pyc
+__pycache__/
+
+# Ignore environment files
+.env
+
+# Ignore all `.DS_Store` files (Mac)
+.DS_Store
