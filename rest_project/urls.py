@@ -40,6 +40,7 @@ urlpatterns = [
     re_path(r'^api/',include([
         path('product/', include('rest_app.urls')),
         path('authentication/',include('authentication.urls')),
+        path('customer/',include('customer.urls')),
     ])),
     
     # Swagger documentation

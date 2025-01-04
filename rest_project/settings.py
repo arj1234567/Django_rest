@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -46,6 +47,7 @@ INSTALLED_APPS = [
     'authentication',
     'django_celery_beat',
     'django_celery_results',
+    'customer',
 ]
 
 MIDDLEWARE = [
@@ -101,6 +103,7 @@ DATABASES = {
         'PORT': 5433,
     },
 }
+
 
 
 

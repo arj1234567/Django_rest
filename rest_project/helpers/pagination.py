@@ -12,7 +12,6 @@ class RestPagination(PageNumberPagination):
         self.response_format = ResponseInfo().response
         super(RestPagination, self).__init__(**kwargs)
 
-
     def get_paginated_response(self, data):
         data = {
             'links': {
