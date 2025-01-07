@@ -5,6 +5,7 @@ urlpatterns = [
     path('createorupdatecustomer/', views.CreateorupdateCustomerApiView.as_view()),
     path('get-customer-list',views.CustomerlistApiView.as_view()),
     path('get-customer-details',views.GetCustomerDetailsApiViiew.as_view()),
-    path('delete-customers',views.DeleteCustomerApiView.as_view())
+    path('delete-customers',views.DeleteCustomerApiView.as_view()),
+    path('customer-dropdown',views.GetCustomerDropdownApiView.as_view()),
     
 ]

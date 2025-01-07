@@ -12,7 +12,7 @@ from rest_project.helpers.pagination import RestPagination
 from rest_project.helpers.response import ResponseInfo
 from customer.models import Customer
 from customer.serializers import CreateorupdatecustomerSerializers,DeleteCustomerSerializers
-from customer.schemas import GetCustomerListSchemas
+from customer.schemas import GetCustomerListSchemas,GetCustomerDropdownSchemas
 
 
 class CreateorupdateCustomerApiView(generics.GenericAPIView):
@@ -152,4 +152,31 @@ class DeleteCustomerApiView(generics.GenericAPIView):
             self.response_format['message']                 = f'exc_type : {exc_type},fname : {fname},tb_lineno : {exc_tb.tb_lineno},error : {str(e)}'
             return Response(self.response_format, status    = status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
+class GetCustomerDropdownApiView(generics.GenericAPIView):
+    def __init__(self, **kwargs):
+        self.response_format = ResponseInfo().response
+        super(GetCustomerDropdownApiView).__init__(**kwargs)
+        
+    serializer_class = GetCustomerDropdownSchemas
+    pagination_class = (IsAuthenticated,)
+    pagination_class = RestPagination
+    
+    @swagger_auto_schema(tags=['Customer'])
+    def get(self,request):
+        try:
+            queryset = Customer.objects.all().order_by('-id')
+            page = self.paginate_queryset(queryset)
+            serializer = self.serializer_class(page,many=True,context={'request':request})
+            return self.get_paginated_response(serializer.data)
+        
+        except Exception as e: 
+            exc_type, exc_obj, exc_tb                       = sys.exc_info()
+            fname                                           = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            self.response_format['status_code']             = status.HTTP_500_INTERNAL_SERVER_ERROR
+            self.response_format['status']                  = False
+            self.response_format['message']                 = f'exc_type : {exc_type},fname : {fname},tb_lineno : {exc_tb.tb_lineno},error : {str(e)}'
+            return Response(self.response_format, status    = status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+            
 # Create your views here.

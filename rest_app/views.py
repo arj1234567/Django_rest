@@ -9,7 +9,7 @@ from rest_framework import generics,status
 from rest_app.models import Product
 from rest_app.serializers import CreateProductSerializers,DeleteProductSerializer
 from rest_project.helpers.response import ResponseInfo
-from rest_app.schemas import GetProductListSchemas,GetProductDetailSchemas
+from rest_app.schemas import GetProductListSchemas,GetProductDetailSchemas,GetDropdownSchemas
 from rest_framework.pagination import PageNumberPagination
 from rest_project.helpers.pagination import RestPagination
 
@@ -146,6 +146,33 @@ class DeleteProductApiView(generics.GenericAPIView):
             self.response_format['status']                  = False
             self.response_format['message']                 = f'exc_type : {exc_type},fname : {fname},tb_lineno : {exc_tb.tb_lineno},error : {str(e)}'
             return Response(self.response_format, status    = status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+
+class GetProductDropdownApiView(generics.GenericAPIView):
+    def __init__(self, **kwargs):
+        self.response_format = ResponseInfo().response
+        super(GetProductDropdownApiView,self).__init__(**kwargs)
+        
+    permission_classes = (IsAuthenticated,)
+    serializer_class = GetDropdownSchemas
+    pagination_class = RestPagination
+    
+    @swagger_auto_schema(tags=['Product'])
+    def get(self,request):
+        try:
+            queryset = Product.objects.all().order_by('-id')
+            page = self.paginate_queryset(queryset)
+            serializer = self.serializer_class(page,many=True,context={'request':request})
+            return self.get_paginated_response(serializer.data)
+        
+        except Exception as e:
+            exc_type,exc_obj,exc_tb                       = sys.exc_info()
+            fname                                         = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            self.response_format['status_code']           = status.HTTP_500_INTERNAL_SERVER_ERROR
+            self.response_format['status']                = False
+            self.response_format['message']               = f'exc_type:{exc_type},fname:{fname},tb_lineno:{exc_tb.tb_lineno},error:{str(e)}'
+            return Response(self.response_format,status   = status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
 
         
 

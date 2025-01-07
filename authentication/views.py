@@ -68,41 +68,32 @@ class LoginApiView(generics.GenericAPIView):
         
         
 class LogoutApiView(generics.GenericAPIView):
-    
-    def __init__(self, **kwargs):
-        self.response_format = ResponseInfo().response
-        super(LogoutApiView,self).__init__(**kwargs)
-    
     serializer_class = LogoutSerializer
     permission_classes = (IsAuthenticated,)
     authentication_classes = [BlacklistedJWTAuthentication]
-    
+
     @swagger_auto_schema(tags=['Authorization'])
-    def post(self,request):
+    def post(self, request):
+        response_format = ResponseInfo().response
+
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
         try:
-            user = get_token_user_or_none(request)
-            if user is not None:
-                GeneratedAccessToken.objects.filter(user=user).delete()
-                user.save()
-                
-                self.response_format['status_code'] = status.HTTP_200_OK
-                self.response_format['status'] = True
-                self.response_format['message'] = "Succesfully logged out"
-                return Response(self.response_format,status=status.HTTP_200_OK)
-                        
-                        
+            # Save (blacklist the token)
+            serializer.save()
+
+            response_format['status_code'] = status.HTTP_200_OK
+            response_format['status'] = True
+            response_format['message'] = "Successfully logged out"
+            return Response(response_format, status=status.HTTP_200_OK)
+
         except Exception as es:
-            # Handle any server-side errors
-            self.response_format['status_code'] = status.HTTP_500_INTERNAL_SERVER_ERROR
-            self.response_format['status'] = False
-            self.response_format['message'] = str(es)
-            return Response(self.response_format, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-            
-        
-        
+            response_format['status_code'] = status.HTTP_500_INTERNAL_SERVER_ERROR
+            response_format['status'] = False
+            response_format['message'] = str(es)
+            return Response(response_format, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
             
-                
-                
-        
+     
 # Create your views here.
